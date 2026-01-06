@@ -73,7 +73,7 @@ async function loadNewWord() {
 }
 
 async function submitGuess() {
-    const guess = guessInput.value.trim();
+    const guess = guessInput.value.trim().replace(/\s+/g, ' ');
     
     if (!guess) {
         return;

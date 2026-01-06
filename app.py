@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 import csv
 import random
+import re
 
 app = Flask(__name__)
 
@@ -17,7 +18,18 @@ def load_vocabulary():
                 
                 meanings = []
                 for meaning in meanings_raw:
-                    synonyms = [syn.strip().lower() for syn in meaning.split(',')]
+                    synonyms = []
+                    for syn in meaning.split(','):
+                        syn_clean = syn.strip().lower()
+                        syn_clean = re.sub(r'\s+', ' ', syn_clean)
+                        synonyms.append(syn_clean)
+                        
+                        if '(' in syn_clean and ')' in syn_clean:
+                            partial = re.sub(r'\([^)]*\)', '', syn_clean).strip()
+                            partial = re.sub(r'\s+', ' ', partial)
+                            if partial and partial not in synonyms:
+                                synonyms.append(partial)
+                    
                     meanings.append({
                         'display': meaning,
                         'synonyms': synonyms
@@ -47,6 +59,7 @@ def check_guess():
     from flask import request
     data = request.json
     guess = data.get('guess', '').strip().lower()
+    guess = re.sub(r'\s+', ' ', guess)
     meanings = data.get('meanings', [])
     
     for idx, meaning in enumerate(meanings):

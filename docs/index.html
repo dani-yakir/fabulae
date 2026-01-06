@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Latin Vocabulary Game</title>
     <style>
         * {
@@ -15,10 +15,21 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.welcome-active {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+        }
+
+        body.game-active {
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
         }
 
         .container {
@@ -26,13 +37,16 @@
             max-width: 600px;
         }
 
-        .screen {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
+        body.game-active .container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            margin: 0 auto;
         }
 
-        .screen.active {
-            display: block;
+        .screen {
+            animation: fadeIn 0.5s ease-in;
         }
 
         @keyframes fadeIn {
@@ -94,32 +108,37 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-height: calc(100vh - 100px);
         }
 
         .card-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px;
+            padding: 25px 20px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .card-header h2 {
             color: white;
-            font-size: 2.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
         }
 
         .card-body {
-            padding: 40px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
 
-        .card-body h3 {
-            color: #667eea;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
 
         #meanings-list {
             list-style: none;
@@ -127,11 +146,11 @@
 
         #meanings-list li {
             background: #f8f9ff;
-            padding: 15px 20px;
-            margin-bottom: 12px;
-            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
             border-left: 4px solid #667eea;
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #333;
             transition: transform 0.2s, box-shadow 0.2s;
         }
@@ -169,28 +188,33 @@
         }
 
         #game-screen {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
         }
 
         .meaning-count {
-            font-size: 1.2rem;
+            font-size: 1rem;
             color: #667eea;
             font-weight: 600;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .input-section {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         #guess-input {
             flex: 1;
-            min-width: 200px;
-            padding: 12px 20px;
+            min-width: 150px;
+            padding: 10px 15px;
             font-size: 1rem;
             border: 2px solid #667eea;
             border-radius: 10px;
@@ -207,7 +231,7 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 20px;
             font-size: 1rem;
             border-radius: 10px;
             cursor: pointer;
@@ -228,7 +252,7 @@
             background: #ffc107;
             color: #333;
             border: none;
-            padding: 12px 30px;
+            padding: 10px 20px;
             font-size: 1rem;
             border-radius: 10px;
             cursor: pointer;
@@ -246,12 +270,22 @@
         }
 
         .message {
-            min-height: 30px;
-            padding: 12px 20px;
+            min-height: 48px;
+            padding: 10px 15px;
             border-radius: 10px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+
+        .message:empty {
+            background: transparent;
+            border: 2px solid transparent;
         }
 
         .message.success {
@@ -273,68 +307,103 @@
         }
 
         .meanings-section {
-            margin-top: 30px;
+            margin-top: 8px;
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         #next-btn {
             width: 100%;
             max-width: 300px;
+            flex-shrink: 0;
+            margin-top: 5px;
+            padding: 12px 40px;
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            body.game-active {
+                padding: 5px;
+            }
+
+            #welcome-screen {
+                padding: 40px 20px;
+            }
+
             #welcome-screen h1 {
                 font-size: 2rem;
             }
             
+            .card-header {
+                padding: 15px 12px;
+            }
+
             .card-header h2 {
-                font-size: 1.8rem;
+                font-size: 1.3rem;
             }
             
             .card-body {
-                padding: 30px 20px;
+                padding: 12px;
+            }
+
+            .meaning-count {
+                font-size: 0.9rem;
+                margin-bottom: 10px;
             }
             
             .input-section {
-                flex-direction: column;
+                gap: 6px;
+                margin-bottom: 10px;
             }
             
             #guess-input {
                 width: 100%;
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+
+            .btn-secondary,
+            .btn-reveal {
+                flex: 1;
+                padding: 10px 15px;
+                font-size: 0.95rem;
+            }
+
+            #meanings-list li {
+                padding: 8px 10px;
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            .message {
+                min-height: 42px;
+                padding: 8px 10px;
+                margin-bottom: 8px;
+                font-size: 0.85rem;
+            }
+
+            .meanings-section {
+                margin-top: 8px;
+            }
+
+            #next-btn {
+                margin-top: 5px;
+                padding: 10px 30px;
+                font-size: 0.95rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="welcome-screen" class="screen active">
+        <div id="welcome-screen" class="screen">
             <h1>Latin Vocabulary</h1>
             <p class="subtitle">Learn Latin through interactive flashcards</p>
             <button id="start-btn" class="btn-primary">Start Learning</button>
-        </div>
-
-        <div id="game-screen" class="screen">
-            <div class="card">
-                <div class="card-header">
-                    <h2 id="latin-word"></h2>
-                </div>
-                <div class="card-body">
-                    <p id="meaning-count" class="meaning-count"></p>
-                    
-                    <div class="input-section">
-                        <input type="text" id="guess-input" placeholder="Type your guess..." autocomplete="off">
-                        <button id="submit-guess" class="btn-secondary">Submit</button>
-                        <button id="reveal-btn" class="btn-reveal">Reveal</button>
-                    </div>
-                    
-                    <div id="message" class="message"></div>
-                    
-                    <div class="meanings-section">
-                        <h3>Meanings:</h3>
-                        <ul id="meanings-list"></ul>
-                    </div>
-                </div>
-            </div>
-            <button id="next-btn" class="btn-primary">Next</button>
         </div>
     </div>
 
@@ -536,45 +605,88 @@ Circē, -ēs f.$Circe$`;
 
         const vocabulary = parseCSV();
         
+        // Set initial body class
+        document.body.classList.add('welcome-active');
+        
         // DOM elements
         const welcomeScreen = document.getElementById('welcome-screen');
-        const gameScreen = document.getElementById('game-screen');
         const startBtn = document.getElementById('start-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const latinWord = document.getElementById('latin-word');
-        const meaningsList = document.getElementById('meanings-list');
-        const meaningCount = document.getElementById('meaning-count');
-        const guessInput = document.getElementById('guess-input');
-        const submitBtn = document.getElementById('submit-guess');
-        const revealBtn = document.getElementById('reveal-btn');
-        const messageDiv = document.getElementById('message');
+        const container = document.querySelector('.container');
 
         let currentWord = null;
         let revealedMeanings = new Set();
+        let gameScreen, nextBtn, latinWord, meaningsList, meaningCount, guessInput, submitBtn, revealBtn, messageDiv;
 
         // Event listeners
         startBtn.addEventListener('click', () => {
-            welcomeScreen.classList.remove('active');
-            gameScreen.classList.add('active');
-            loadNewWord();
-        });
+            // Remove welcome screen
+            welcomeScreen.remove();
+            
+            // Add game-active class to body
+            document.body.classList.remove('welcome-active');
+            document.body.classList.add('game-active');
+            
+            // Create game screen
+            gameScreen = document.createElement('div');
+            gameScreen.id = 'game-screen';
+            gameScreen.className = 'screen';
+            gameScreen.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 id="latin-word"></h2>
+                    </div>
+                    <div class="card-body">
+                        <p id="meaning-count" class="meaning-count"></p>
+                        
+                        <div class="input-section">
+                            <input type="text" id="guess-input" placeholder="Type your guess..." autocomplete="off">
+                            <button id="submit-guess" class="btn-secondary">Submit</button>
+                            <button id="reveal-btn" class="btn-reveal">Reveal</button>
+                        </div>
+                        
+                        <div id="message" class="message"></div>
+                        
+                        <div class="meanings-section">
+                            <ul id="meanings-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <button id="next-btn" class="btn-primary">Next</button>
+            `;
+            
+            container.appendChild(gameScreen);
+            
+            // Get references to new elements
+            nextBtn = document.getElementById('next-btn');
+            latinWord = document.getElementById('latin-word');
+            meaningsList = document.getElementById('meanings-list');
+            meaningCount = document.getElementById('meaning-count');
+            guessInput = document.getElementById('guess-input');
+            submitBtn = document.getElementById('submit-guess');
+            revealBtn = document.getElementById('reveal-btn');
+            messageDiv = document.getElementById('message');
+            
+            // Add event listeners to game elements
+            nextBtn.addEventListener('click', () => {
+                loadNewWord();
+            });
 
-        nextBtn.addEventListener('click', () => {
-            loadNewWord();
-        });
-
-        submitBtn.addEventListener('click', () => {
-            submitGuess();
-        });
-
-        guessInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            submitBtn.addEventListener('click', () => {
                 submitGuess();
-            }
-        });
+            });
 
-        revealBtn.addEventListener('click', () => {
-            revealAllMeanings();
+            guessInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    submitGuess();
+                }
+            });
+
+            revealBtn.addEventListener('click', () => {
+                revealAllMeanings();
+            });
+            
+            // Load first word
+            loadNewWord();
         });
 
         // Game functions

@@ -13,7 +13,16 @@ def load_vocabulary():
             if len(row) >= 2 and row[0].strip() and row[1].strip():
                 latin_word = row[0].strip()
                 definitions = row[1].strip()
-                meanings = [meaning.strip() for meaning in definitions.split(';')]
+                meanings_raw = [meaning.strip() for meaning in definitions.split(';')]
+                
+                meanings = []
+                for meaning in meanings_raw:
+                    synonyms = [syn.strip().lower() for syn in meaning.split(',')]
+                    meanings.append({
+                        'display': meaning,
+                        'synonyms': synonyms
+                    })
+                
                 vocab.append({
                     'latin': latin_word,
                     'meanings': meanings
@@ -32,6 +41,23 @@ def random_word():
         word = random.choice(vocabulary)
         return jsonify(word)
     return jsonify({'error': 'No vocabulary available'}), 404
+
+@app.route('/api/check-guess', methods=['POST'])
+def check_guess():
+    from flask import request
+    data = request.json
+    guess = data.get('guess', '').strip().lower()
+    meanings = data.get('meanings', [])
+    
+    for idx, meaning in enumerate(meanings):
+        if guess in meaning.get('synonyms', []):
+            return jsonify({
+                'correct': True,
+                'meaningIndex': idx,
+                'display': meaning.get('display')
+            })
+    
+    return jsonify({'correct': False})
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

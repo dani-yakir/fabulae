@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latin Vocabulary Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div id="welcome-screen" class="screen active">
+            <h1>Latin Vocabulary</h1>
+            <p class="subtitle">Learn Latin through interactive flashcards</p>
+            <button id="start-btn" class="btn-primary">Start Learning</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2 id="latin-word"></h2>
+                </div>
+                <div class="card-body">
+                    <h3>Meanings:</h3>
+                    <ul id="meanings-list"></ul>
+                </div>
+            </div>
+            <button id="next-btn" class="btn-primary">Next</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

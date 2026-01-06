@@ -31,8 +31,10 @@ fabulae/
 ├── static/
 │   ├── style.css         # Styles for server version
 │   └── script.js         # Client-side logic for server version
-└── static-version/
-    └── index.html        # Standalone single-file version
+├── static-version/
+│   └── index.html        # Standalone single-file version
+└── docs/
+    └── index.html        # GitHub Pages deployment (copy of static version)
 ```
 
 ## CSV Format
@@ -89,6 +91,27 @@ Simply open `static-version/index.html` in any web browser. No server required.
 - JavaScript parses CSV data on page load
 - Client-side validation matches the server logic exactly
 - Can be hosted on any static web server or shared as a single file
+
+## GitHub Pages Deployment
+
+The `/docs` folder contains a copy of the static version for GitHub Pages deployment.
+
+### Setup
+1. Commit and push the docs folder:
+   ```bash
+   git add docs/
+   git commit -m "Add docs folder for GitHub Pages"
+   git push
+   ```
+
+2. Configure GitHub Pages in your repository settings:
+   - Go to **Settings** → **Pages**
+   - **Source**: Deploy from a branch
+   - **Branch**: Select your main branch
+   - **Folder**: Select `/docs`
+   - Click **Save**
+
+3. Your site will be live at `https://<username>.github.io/<repository-name>/`
 
 ## Game Logic
 

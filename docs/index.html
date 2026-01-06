@@ -703,13 +703,22 @@ Circē, -ēs f.$Circe$`;
             meaningCount.textContent = `This card has ${currentWord.meanings.length} meaning${currentWord.meanings.length > 1 ? 's' : ''}`;
             
             meaningsList.innerHTML = '';
-            currentWord.meanings.forEach((meaning, index) => {
+            
+            // Always create exactly 2 meaning slots
+            for (let i = 0; i < 2; i++) {
                 const li = document.createElement('li');
-                li.textContent = meaning.display;
-                li.classList.add('hidden');
-                li.dataset.index = index;
+                if (i < currentWord.meanings.length) {
+                    li.textContent = currentWord.meanings[i].display;
+                    li.classList.add('hidden');
+                    li.dataset.index = i;
+                } else {
+                    // Empty placeholder for consistent layout
+                    li.textContent = '\u00A0'; // Non-breaking space
+                    li.classList.add('hidden');
+                    li.style.visibility = 'hidden';
+                }
                 meaningsList.appendChild(li);
-            });
+            }
             
             guessInput.value = '';
             guessInput.focus();
